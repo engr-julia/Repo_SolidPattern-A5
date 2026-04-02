@@ -9,7 +9,6 @@ The original implementation violates multiple SOLID principles:
 1. Single Responsibility Principle (SRP) Violation
 
    * The `OrderAction` class handles multiple responsibilities:
-
      * Order calculation
      * Order placement
      * Invoice generation
@@ -29,6 +28,12 @@ The original implementation violates multiple SOLID principles:
 
 ---
 
+## UML Class Diagram
+
+![Order System UML](Order%20System.jpg)
+
+---
+
 ## Refactored Design (Applying SOLID)
 
 ### Key Improvements
@@ -40,66 +45,72 @@ The original implementation violates multiple SOLID principles:
 
 ---
 
-## Refactored Interfaces
+## ✅ Full Java Implementation (All-in-One)
+
+> You can copy this into a single file named `OrderSystem.java` for quick testing.
 
 ```java
-public interface OrderCalculator {
+// =======================
+// INTERFACES
+// =======================
+
+interface OrderCalculator {
     double calculateTotal(double price, int quantity);
 }
 
-public interface OrderPlacer {
+interface OrderPlacer {
     void placeOrder(String customerName, String address);
 }
 
-public interface InvoiceGenerator {
+interface InvoiceGenerator {
     void generateInvoice(String fileName);
 }
 
-public interface NotificationService {
+interface NotificationService {
     void sendNotification(String message);
 }
-```
 
----
+// =======================
+// IMPLEMENTATIONS
+// =======================
 
-## Refactored Implementations
+class BasicOrderCalculator implements OrderCalculator {
 
-```java
-public class BasicOrderCalculator implements OrderCalculator {
     @Override
     public double calculateTotal(double price, int quantity) {
         return price * quantity;
     }
 }
 
-public class BasicOrderPlacer implements OrderPlacer {
+class BasicOrderPlacer implements OrderPlacer {
+
     @Override
     public void placeOrder(String customerName, String address) {
         System.out.println("Order placed for " + customerName + " at " + address);
     }
 }
 
-public class PDFInvoiceGenerator implements InvoiceGenerator {
+class PDFInvoiceGenerator implements InvoiceGenerator {
+
     @Override
     public void generateInvoice(String fileName) {
         System.out.println("Invoice generated: " + fileName);
     }
 }
 
-public class EmailNotificationService implements NotificationService {
+class EmailNotificationService implements NotificationService {
+
     @Override
     public void sendNotification(String message) {
         System.out.println("Email sent: " + message);
     }
 }
-```
 
----
+// =======================
+// HIGH-LEVEL SERVICE (DIP)
+// =======================
 
-## High-Level Order Service (DIP Applied)
-
-```java
-public class OrderService {
+class OrderService {
 
     private OrderCalculator calculator;
     private OrderPlacer placer;
@@ -125,14 +136,13 @@ public class OrderService {
         notificationService.sendNotification("Your order has been placed.");
     }
 }
-```
 
----
+// =======================
+// TEST CLASS (MAIN)
+// =======================
 
-## Test Class
+public class OrderSystem {
 
-```java
-public class OrderTest {
     public static void main(String[] args) {
 
         OrderCalculator calculator = new BasicOrderCalculator();
@@ -150,25 +160,3 @@ public class OrderTest {
         orderService.processOrder(10.0, 2, "John Doe", "123 Main St");
     }
 }
-```
-
----
-
-## Summary of SOLID Application
-
-| Principle | Implementation                                            |
-| --------- | --------------------------------------------------------- |
-| SRP       | Each class has one responsibility                         |
-| ISP       | Interfaces are segregated                                 |
-| OCP       | New features can be added without modifying existing code |
-| DIP       | High-level modules depend on abstractions                 |
-
----
-
-## Key Takeaway
-
-This refactoring makes the system:
-
-* More scalable
-* Easier to maintain
-* Flexible for future extensions (e.g., SMS notifications, different invoice formats)
